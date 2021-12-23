@@ -1,13 +1,13 @@
 {
     "products" : [
-    {"id": 123,
+    {"id": 1,
     "nombre": "PS5",
     "precio": 150000,
     "stock": 1000,
     "codigo": "asdad1212dsda",
     "publicado": true,
     "fecha_creacion": "22/12/2021"},
-    {"id": 123,
+    {"id": 2,
         "nombre": "PS4",
         "precio": 150000,
         "stock": 1000,
@@ -15,7 +15,7 @@
         "publicado": true,
         "fecha_creacion": "22/12/2021"},
 
-    {"id": 123,
+    {"id": 3,
         "nombre": "PS3",
         "precio": 150000,
         "stock": 1000,
