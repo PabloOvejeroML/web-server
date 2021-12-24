@@ -1,15 +1,20 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
-	"io/ioutil"
-	"reflect"
-	"strconv"
+	/*
+		"encoding/json"
+		"errors"
+		"io/ioutil"
+		"reflect"
+		"strconv"
+	*/
 
+	"github.com/PabloOvejeroML/web-server/cmd/server/controlador"
+	"github.com/PabloOvejeroML/web-server/internal/productos"
 	"github.com/gin-gonic/gin"
 )
 
+/*
 type Products struct {
 	Products []Product `json:"products"`
 }
@@ -181,23 +186,19 @@ func handlerSaveProduct() gin.HandlerFunc {
 		c.JSON(200, prod)
 	}
 }
-
+*/
 func main() {
-	router := gin.Default()
-	inicializarProducts()
+	repo := productos.NewRepository()
+	service := productos.NewService(repo)
+	product := controlador.NewProduct(service)
 
-	router.GET("/message/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.JSON(200, gin.H{
-			"message": "hola " + name,
-		})
-	})
+	router := gin.Default()
 
 	rp := router.Group("/productos")
 
-	rp.GET("/", handlerProducts)
-	rp.GET("/:id", handlerProduct)
-	rp.POST("/", handlerSaveProduct())
+	rp.GET("/", product.GetAll())
+	rp.GET("/:id", product.Get())
+	rp.POST("/", product.Store())
 
 	router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
