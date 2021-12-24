@@ -1,6 +1,9 @@
 package controlador
 
 import (
+	"errors"
+	"reflect"
+
 	"github.com/PabloOvejeroML/web-server/internal/productos"
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +25,23 @@ func NewProduct(p productos.Service) *Product {
 	return &Product{service: p}
 }
 
+func getField(v interface{}, name string, c *gin.Context) (interface{}, error) {
+	rv := reflect.ValueOf(v)
+
+	rv = rv.Elem()
+
+	fv := rv.FieldByName(name)
+
+	if fv.IsZero() {
+		c.JSON(405, gin.H{
+			"error": "el campo " + name + " es requerido",
+		})
+		return nil, errors.New("error")
+	}
+
+	return fv, nil
+}
+
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("token")
@@ -40,20 +60,21 @@ func (p *Product) GetAll() gin.HandlerFunc {
 			})
 			return
 		}
-		/*
-			var filtrados []productos.Product
+		//esta mal que toda esta logica este aca.. lo hice para probar. Mas adelante si queres consultar por capos habria que hacer una query
 
-			for _, v := range products {
-				if c.Query("nombre") == v.Nombre {
-					filtrados = append(filtrados, v)
-				}
+		var filtrados []productos.Product
+
+		for _, v := range products {
+			if c.Query("nombre") == v.Nombre {
+				filtrados = append(filtrados, v)
 			}
-		*/
-		//		if len(filtrados) > 0 {
-		//			c.JSON(200, filtrados)
-		//		} else {
-		c.JSON(200, products)
-		//		}
+		}
+
+		if len(filtrados) > 0 {
+			c.JSON(200, filtrados)
+		} else {
+			c.JSON(200, products)
+		}
 
 	}
 }
@@ -88,6 +109,15 @@ func (p *Product) Store() gin.HandlerFunc {
 				"error": err.Error(),
 			})
 			return
+		}
+
+		listaDeCamposRequeridos := []string{"Nombre", "Precio", "Stock", "Codigo", "Publicado", "Fecha_creacion"}
+
+		for _, nombreDelCampo := range listaDeCamposRequeridos {
+			_, err := getField(&req, nombreDelCampo, c)
+			if err != nil {
+				return
+			}
 		}
 
 		prod, err := p.service.Store(req.Nombre, req.Precio, req.Stock, req.Codigo, req.Publicado, req.Fecha_creacion)
