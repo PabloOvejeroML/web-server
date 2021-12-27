@@ -2,7 +2,10 @@ package controlador
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"reflect"
+	"strconv"
 
 	"github.com/PabloOvejeroML/web-server/internal/productos"
 	"github.com/gin-gonic/gin"
@@ -45,7 +48,7 @@ func getField(v interface{}, name string, c *gin.Context) (interface{}, error) {
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("token")
-		if token != "123456" {
+		if token != os.Getenv("TOKEN") {
 			c.JSON(401, gin.H{
 				"error": "token invalido",
 			})
@@ -97,7 +100,7 @@ func (p *Product) Get() gin.HandlerFunc {
 func (p *Product) Store() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("token")
-		if token != "123456" {
+		if token != os.Getenv("TOKEN") {
 			c.JSON(401, gin.H{
 				"error": "token invalido",
 			})
@@ -129,6 +132,127 @@ func (p *Product) Store() gin.HandlerFunc {
 			return
 		}
 		c.JSON(200, prod)
+	}
+
+}
+
+func (p *Product) Update() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.Header.Get("token")
+		if token != os.Getenv("TOKEN") {
+			c.JSON(401, gin.H{
+				"error": "token invalido",
+			})
+			return
+		}
+
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+
+		if err != nil {
+			c.JSON(400, gin.H{"error": "invalid ID"})
+		}
+
+		var req request
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		listaDeCamposRequeridos := []string{"Nombre", "Precio", "Stock", "Codigo", "Publicado", "Fecha_creacion"}
+
+		for _, nombreDelCampo := range listaDeCamposRequeridos {
+			_, err := getField(&req, nombreDelCampo, c)
+			if err != nil {
+				return
+			}
+		}
+
+		prod, err := p.service.Update(int(id), req.Nombre, req.Precio, req.Stock, req.Codigo, req.Publicado, req.Fecha_creacion)
+
+		if err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, prod)
+	}
+
+}
+
+func (p *Product) UpdateFields() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.Header.Get("token")
+		if token != os.Getenv("TOKEN") {
+			c.JSON(401, gin.H{
+				"error": "token invalido",
+			})
+			return
+		}
+
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+
+		if err != nil {
+			c.JSON(400, gin.H{"error": "invalid ID"})
+		}
+
+		var req request
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		listaDeCamposRequeridos := []string{"Nombre", "Precio"}
+
+		for _, nombreDelCampo := range listaDeCamposRequeridos {
+			_, err := getField(&req, nombreDelCampo, c)
+			if err != nil {
+				return
+			}
+		}
+
+		prod, err := p.service.UpdateNamePrice(int(id), req.Nombre, req.Precio)
+
+		if err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, prod)
+	}
+
+}
+
+func (p *Product) Delete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.Header.Get("token")
+		if token != os.Getenv("TOKEN") {
+			c.JSON(401, gin.H{
+				"error": "token invalido",
+			})
+			return
+		}
+
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+
+		if err != nil {
+			c.JSON(400, gin.H{"error": "invalid ID"})
+		}
+
+		err = p.service.Delete(int(id))
+
+		if err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, gin.H{"data": fmt.Sprintf("El producto %d ha sido eliminado", id)})
 	}
 
 }

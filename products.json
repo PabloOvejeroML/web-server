@@ -1,26 +1,29 @@
-{
-    "products" : [
-    {"id": 1,
-    "nombre": "PS5",
-    "precio": 150000,
-    "stock": 1000,
-    "codigo": "asdad1212dsda",
-    "publicado": true,
-    "fecha_creacion": "22/12/2021"},
-    {"id": 2,
-        "nombre": "PS4",
-        "precio": 150000,
-        "stock": 1000,
-        "codigo": "asdad1212dsda",
-        "publicado": true,
-        "fecha_creacion": "22/12/2021"},
-
-    {"id": 3,
-        "nombre": "PS3",
-        "precio": 150000,
-        "stock": 1000,
-        "codigo": "asdad1212dsda",
-        "publicado": true,
-        "fecha_creacion": "22/12/2021"}
-    ]
-}
+[
+ {
+  "id": 1,
+  "nombre": "PS5 clean",
+  "precio": 150000,
+  "stock": 1000,
+  "codigo": "asdad1212dsda",
+  "publicado": true,
+  "fecha_creacion": "22/12/2021"
+ },
+ {
+  "id": 2,
+  "nombre": "PS6",
+  "precio": 150000,
+  "stock": 1000,
+  "codigo": "asdad1212dsda",
+  "publicado": true,
+  "fecha_creacion": "22/12/2021"
+ },
+ {
+  "id": 3,
+  "nombre": "Switch",
+  "precio": 300000,
+  "stock": 1000,
+  "codigo": "asdad1212dsda",
+  "publicado": true,
+  "fecha_creacion": "22/12/2021"
+ }
+]
