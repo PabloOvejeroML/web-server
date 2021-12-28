@@ -2,14 +2,27 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/PabloOvejeroML/web-server/cmd/server/controlador"
+	"github.com/PabloOvejeroML/web-server/docs"
 	"github.com/PabloOvejeroML/web-server/internal/productos"
 	"github.com/PabloOvejeroML/web-server/pkg/store"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+//@title PRODUCTS
+//@version 1.0
+//@description La API permite crear, leer, actualizar y borrar productos (CRUD)
+//@termsOfService https://developers.mercadolibre.com.ar/es_ar/terminos-y-condiciones
+
+//@contact.name PabloOvejeroML
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -21,6 +34,9 @@ func main() {
 	product := controlador.NewProduct(service)
 
 	router := gin.Default()
+
+	docs.SwaggerInfo.Host = os.Getenv("HOST")
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	rp := router.Group("/productos")
 
