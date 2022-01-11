@@ -16,14 +16,5 @@
   "codigo": "asdad1212dsda",
   "publicado": true,
   "fecha_creacion": "22/12/2021"
- },
- {
-  "id": 3,
-  "nombre": "XBOXONE",
-  "precio": 32,
-  "stock": 2230,
-  "codigo": "string",
-  "publicado": true,
-  "fecha_creacion": "22/12/2021"
  }
 ]

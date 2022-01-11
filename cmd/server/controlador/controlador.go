@@ -2,7 +2,6 @@ package controlador
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"reflect"
 	"strconv"
@@ -98,7 +97,8 @@ func (p *Product) GetAll() gin.HandlerFunc {
 func (p *Product) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		prod, err := p.service.Get(id)
+		idInt, _ := strconv.Atoi(id)
+		prod, err := p.service.Get(idInt)
 
 		if err != nil {
 			c.JSON(404, web.NewResponse(404, nil, "ID not found"))
@@ -226,7 +226,7 @@ func (p *Product) Update() gin.HandlerFunc {
 //@Router /productos/{id} [patch]
 func (p *Product) UpdateFields() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("entré")
+
 		token := c.Request.Header.Get("token")
 		if token != os.Getenv("TOKEN") {
 			c.JSON(401, web.NewResponse(401, nil, "Token inválido"))

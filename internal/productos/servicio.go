@@ -1,12 +1,8 @@
 package productos
 
-import (
-	"strconv"
-)
-
 type Service interface {
 	GetAll() ([]Product, error)
-	Get(id string) (Product, error)
+	Get(id int) (Product, error)
 	Store(nombre string, precio int, stock int, codigo string, publicado bool, fecha_creacion string) (Product, error)
 	Update(id int, nombre string, precio int, stock int, codigo string, publicado bool, fecha_creacion string) (Product, error)
 	Delete(id int) error
@@ -32,11 +28,9 @@ func (s *service) GetAll() ([]Product, error) {
 	return ps, nil
 }
 
-func (s *service) Get(id string) (Product, error) {
-	//esto hacerlo en el controller
-	idInt, _ := strconv.Atoi(id)
+func (s *service) Get(id int) (Product, error) {
 
-	product, err := s.repository.Get(idInt)
+	product, err := s.repository.Get(id)
 
 	if err != nil {
 		return Product{}, err
