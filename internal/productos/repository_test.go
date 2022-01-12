@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/PabloOvejeroML/web-server/pkg/store"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,16 +64,51 @@ func (fs *spyFileStore) Read(data interface{}) error {
 	return nil
 }
 
-func TestGetAll(t *testing.T) {
+func TestRepositoryGetAll(t *testing.T) {
 
-	repo := NewRepository(&stubFileStore{})
+	input := []Product{
+		{
+			Id:             1,
+			Nombre:         "nintendo switch lite",
+			Precio:         2233,
+			Stock:          121212,
+			Codigo:         "string",
+			Publicado:      true,
+			Fecha_creacion: "22/12/2021",
+		}, {
+			Id:             2,
+			Nombre:         "PS6",
+			Precio:         150000,
+			Stock:          1000,
+			Codigo:         "asdad1212dsda",
+			Publicado:      true,
+			Fecha_creacion: "22/12/2021",
+		},
+	}
+	dataJson, _ := json.Marshal(input)
+	dbMock := store.Mock{
+		Data: dataJson,
+	}
+	storeStub := store.FileStore{
+		FileName: "",
+		Mock:     &dbMock,
+	}
+	myRepo := NewRepository(&storeStub)
+	// Test Execution
+	resp, _ := myRepo.GetAll()
+	// Validation
+	assert.Equal(t, input, resp)
 
-	request, err := repo.GetAll()
-	assert.Equal(t, 2, len(request))
-	assert.Equal(t, nil, err)
+	/*
+		repo := NewRepository(&stubFileStore{})
 
+		request, err := repo.GetAll()
+		assert.Equal(t, 2, len(request))
+		assert.Equal(t, nil, err)
+	*/
 }
 
+/*
 func TestUpdate(t *testing.T) {
 
 	spy := &spyFileStore{[]Product{
@@ -88,3 +124,4 @@ func TestUpdate(t *testing.T) {
 	assert.Equal(t, nil, err)
 
 }
+*/
